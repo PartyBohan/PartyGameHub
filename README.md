@@ -1,0 +1,2 @@
+# PartyGameHub
+all games
