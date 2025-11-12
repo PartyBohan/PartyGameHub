@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Games Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #mainMenu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+        #mainMenu.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .menu-title {
+            font-size: 4rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 2rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .menu-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 3rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .game-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1200px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .game-btn {
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 15px;
+            padding: 1.5rem 2rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .game-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .game-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: white;
+        }
+
+        .game-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .game-btn-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .game-btn-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+            font-weight: normal;
+        }
+
+        #gameContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        #gameContainer.active {
+            display: block;
+        }
+
+        #gameFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        #backButton {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #667eea;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        #backButton.active {
+            display: block;
+        }
+
+        #backButton:hover {
+            background: white;
+            transform: translateX(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #backButton::before {
+            content: '← ';
+            margin-right: 5px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-title {
+                font-size: 2.5rem;
+            }
+
+            .game-buttons {
+                max-width: 90%;
+                grid-template-columns: 1fr;
+            }
+
+            .game-btn {
+                padding: 1.2rem 1.5rem;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Menu -->
+    <div id="mainMenu">
+        <h1 class="menu-title">🎵 Music Games Hub</h1>
+        <p class="menu-subtitle">Choose your musical adventure</p>
+        <div class="game-buttons">
+            <button class="game-btn" data-game="duo-music-game.html">
+                <span class="game-btn-icon">🎸</span>
+                Duo Music Game
+                <div class="game-btn-description">Two-player split-screen rhythm game</div>
+            </button>
+            <button class="game-btn" data-game="piano-flight.html">
+                <span class="game-btn-icon">✈️</span>
+                Piano Flight
+                <div class="game-btn-description">Fly through obstacles with MIDI chords</div>
+            </button>
+            <button class="game-btn" data-game="rhythm-islands.html">
+                <span class="game-btn-icon">🏝️</span>
+                Rhythm Islands
+                <div class="game-btn-description">Play chords to cross islands</div>
+            </button>
+            <button class="game-btn" data-game="piano-hero.html">
+                <span class="game-btn-icon">🎹</span>
+                Piano Hero
+                <div class="game-btn-description">Two-player piano battle game</div>
+            </button>
+            <button class="game-btn" data-game="piano-chords.html">
+                <span class="game-btn-icon">🎵</span>
+                Piano Chords
+                <div class="game-btn-description">Interactive piano chord player</div>
+            </button>
+            <button class="game-btn" data-game="voice-to-sax.html">
+                <span class="game-btn-icon">🎷</span>
+                Voice to Sax
+                <div class="game-btn-description">Convert your voice to saxophone</div>
+            </button>
+            <button class="game-btn" data-game="courage-adventure.html">
+                <span class="game-btn-icon">🦁</span>
+                Courage Adventure
+                <div class="game-btn-description">Journey through mystical zones</div>
+            </button>
+            <button class="game-btn" data-game="chord-progress-practice.html">
+                <span class="game-btn-icon">🎼</span>
+                Chord Progress Practice
+                <div class="game-btn-description">Practice chords with drum and hexagon</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div id="gameContainer">
+        <button id="backButton">Back to Menu</button>
+        <iframe id="gameFrame" src=""></iframe>
+    </div>
+
+    <script>
+        const mainMenu = document.getElementById('mainMenu');
+        const gameContainer = document.getElementById('gameContainer');
+        const gameFrame = document.getElementById('gameFrame');
+        const backButton = document.getElementById('backButton');
+        const gameButtons = document.querySelectorAll('.game-btn');
+
+        // Load game when button is clicked
+        gameButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const gameFile = btn.getAttribute('data-game');
+                loadGame(gameFile);
+            });
+        });
+
+        // Back button functionality
+        backButton.addEventListener('click', () => {
+            showMenu();
+        });
+
+        function loadGame(gameFile) {
+            // Hide menu and show game container
+            mainMenu.classList.add('hidden');
+            gameContainer.classList.add('active');
+            backButton.classList.add('active');
+            
+            // Load game in iframe
+            gameFrame.src = gameFile;
+        }
+
+        function showMenu() {
+            // Hide game container and show menu
+            gameContainer.classList.remove('active');
+            backButton.classList.remove('active');
+            mainMenu.classList.remove('hidden');
+            
+            // Clear iframe to stop game
+            gameFrame.src = '';
+        }
+
+        // Handle browser back button
+        window.addEventListener('popstate', (e) => {
+            if (gameContainer.classList.contains('active')) {
+                showMenu();
+            }
+        });
+
+        // Prevent iframe from navigating parent
+        gameFrame.addEventListener('load', () => {
+            try {
+                const iframeWindow = gameFrame.contentWindow;
+                if (iframeWindow) {
+                    iframeWindow.addEventListener('beforeunload', (e) => {
+                        // Allow iframe navigation but keep parent stable
+                    });
+                }
+            } catch (e) {
+                // Cross-origin restrictions - this is fine
+            }
+        });
+    </script>
+</body>
+</html>
